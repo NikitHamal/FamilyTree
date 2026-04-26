@@ -20,6 +20,12 @@ android {
         compose = true
     }
 
+    sourceSets {
+        getByName("main") {
+            java.setSrcDirs(listOf("src/main/kotlin"))
+        }
+    }
+
     signingConfigs {
         create("release") {
             storeFile = rootProject.file("keystore/famy-release.jks")

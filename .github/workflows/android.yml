@@ -42,6 +42,12 @@ jobs:
           gradle-version: '9.4.1'
           cache-read-only: false
 
+      - name: Remove stale generated source duplicates
+        run: |
+          # Earlier generated zips placed Kotlin files under src/main/java.
+          # The canonical source tree is src/main/kotlin; removing stale copies avoids redeclarations.
+          rm -rf app/src/main/java
+
       - name: Build Release APK
         run: gradle --no-daemon --stacktrace --build-cache assembleRelease
 

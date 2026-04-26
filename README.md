@@ -46,3 +46,7 @@ The theme is prepared with a clean geometric sans-serif style. Font binaries are
 ## License
 
 MIT
+## Updating an existing failed repository
+
+If you previously pushed an older generated version, delete `app/src/main/java` before committing this fixed project. The canonical source tree is `app/src/main/kotlin`. The GitHub workflow also removes stale `app/src/main/java` on the runner to prevent duplicate Kotlin declarations.
+

@@ -20,3 +20,4 @@
   - Next: User replaces repository contents or pushes corrected ZIP contents to GitHub, and workflow builds signed release artifact.
 - Open questions (UNCONFIRMED if needed): None blocking.
 - Working set (files/ids/commands): `/mnt/data/famy_fix/Famy`, `/mnt/data/Famy_fixed.zip`, user brief from uploaded markdown file, failing GitHub Actions log from user.
+- 2026-04-26 fix pass 2: compile log showed both app/src/main/java and app/src/main/kotlin being compiled, causing widespread redeclarations. Canonical source set is now src/main/kotlin only; workflow removes stale src/main/java before build; app build.gradle restricts main source dirs to src/main/kotlin. Also added missing dp import in FamyApp and removed SelectionContainer wrapper from crash report screen.
