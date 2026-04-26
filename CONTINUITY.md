@@ -1,0 +1,22 @@
+# Continuity Ledger
+
+- Goal (incl. success criteria): Build a complete Android project for Famy, package `com.famy.tree`, with Material 3 Jetpack Compose UI, offline local storage, optimized visual family tree, onboarding, crash/debug screen, app icon, public signing keystore, and GitHub Actions workflow that builds and uploads a signed release APK renamed with commit SHA.
+- Constraints/Assumptions:
+  - Android app is offline-first and stores data locally on-device.
+  - Use Kotlin, Jetpack Compose, Material 3, Material Icons.
+  - Use modern stable toolchain defaults: AGP 9.2.0, Gradle 9.4.1 in CI, Kotlin 2.3.20, Compose BOM 2026.04.01.
+  - Poppins font binaries are not bundled in the repository.
+  - Public release keystore is intentionally included as requested for open-source/personal workflow.
+  - This sandbox cannot download Gradle/Android dependencies, so final build verification is deferred to GitHub Actions/Android Studio.
+- Key decisions:
+  - Single Android module for easy GitHub import, with modular package structure inside `app/src/main/java/com/famy/tree`.
+  - Local JSON file repository avoids database codegen, keeps builds fast, and remains easy to inspect/backup.
+  - Tree rendering uses Compose Canvas with transform gestures, viewport culling, compact node drawing, and multiple layouts.
+  - Crash catcher stores raw stack trace and launches a minimal copy/restart screen.
+  - CI uses latest GitHub action major versions and installs Gradle through `gradle/actions/setup-gradle@v6` for reliability.
+- State:
+  - Done: Project files, Kotlin source, resources, CI workflow, icon, README, public keystore, and final ZIP artifact generated.
+  - Now: Deliver ZIP to user.
+  - Next: User extracts ZIP, pushes to GitHub, and the workflow builds signed release artifact.
+- Open questions (UNCONFIRMED if needed): None blocking.
+- Working set (files/ids/commands): `/mnt/data/Famy`, `/mnt/data/Famy.zip`, user brief from uploaded markdown file.

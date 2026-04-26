@@ -1,0 +1,4 @@
+<full-backup-content>
+    <include domain="file" path="famy_state.json" />
+    <include domain="sharedpref" path="." />
+</full-backup-content>

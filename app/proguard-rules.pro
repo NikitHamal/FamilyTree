@@ -1,0 +1,3 @@
+-keep class com.famy.tree.crash.CrashReportActivity { *; }
+-keep class com.famy.tree.FamyApplication { *; }
+-keep class com.famy.tree.MainActivity { *; }
