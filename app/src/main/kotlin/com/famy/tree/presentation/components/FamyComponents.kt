@@ -24,10 +24,10 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -326,7 +326,7 @@ fun MemberEditorDialog(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier.menuAnchor().fillMaxWidth()
                     )
-                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         Gender.entries.forEach { item ->
                             DropdownMenuItem(
                                 text = { Text(item.name.replace('_', ' ').lowercase().replaceFirstChar { it.titlecase() }) },
@@ -380,7 +380,7 @@ fun RelationshipTypePicker(value: RelationshipType, onValueChange: (Relationship
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             modifier = Modifier.menuAnchor().fillMaxWidth()
         )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             RelationshipType.entries.forEach { type ->
                 DropdownMenuItem(
                     text = { Text(type.name.replace('_', ' ').lowercase().replaceFirstChar { it.titlecase() }) },
@@ -405,7 +405,7 @@ fun MemberPicker(label: String, members: List<FamilyMember>, selectedId: String,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             modifier = Modifier.menuAnchor().fillMaxWidth()
         )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             members.forEach { member ->
                 DropdownMenuItem(text = { Text(member.displayName) }, onClick = { onSelected(member.id); expanded = false })
             }
