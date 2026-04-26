@@ -4,19 +4,19 @@
 - Constraints/Assumptions:
   - Android app is offline-first and stores data locally on-device.
   - Use Kotlin, Jetpack Compose, Material 3, Material Icons.
-  - Use modern stable toolchain defaults: AGP 9.2.0, Gradle 9.4.1 in CI, Kotlin 2.3.20, Compose BOM 2026.04.01.
+  - Use modern stable toolchain defaults: AGP 9.2.0, Gradle 9.4.1 in CI, AGP built-in Kotlin, Kotlin Compose plugin 2.3.20, Compose BOM 2026.04.01.
   - Poppins font binaries are not bundled in the repository.
   - Public release keystore is intentionally included as requested for open-source/personal workflow.
-  - This sandbox cannot download Gradle/Android dependencies, so final build verification is deferred to GitHub Actions/Android Studio.
+  - This sandbox cannot run a full Android build because it lacks Android SDK/Gradle dependency setup, so final build verification is deferred to GitHub Actions/Android Studio.
 - Key decisions:
-  - Single Android module for easy GitHub import, with modular package structure inside `app/src/main/java/com/famy/tree`.
+  - Single Android module for easy GitHub import, with modular package structure inside `app/src/main/kotlin/com/famy/tree`.
   - Local JSON file repository avoids database codegen, keeps builds fast, and remains easy to inspect/backup.
   - Tree rendering uses Compose Canvas with transform gestures, viewport culling, compact node drawing, and multiple layouts.
   - Crash catcher stores raw stack trace and launches a minimal copy/restart screen.
-  - CI uses latest GitHub action major versions and installs Gradle through `gradle/actions/setup-gradle@v6` for reliability.
+  - CI uses current GitHub action major versions and installs Gradle through `gradle/actions/setup-gradle@v6` for reliability.
 - State:
-  - Done: Project files, Kotlin source, resources, CI workflow, icon, README, public keystore, and final ZIP artifact generated.
-  - Now: Deliver ZIP to user.
-  - Next: User extracts ZIP, pushes to GitHub, and the workflow builds signed release artifact.
+  - Done: Project files, Kotlin source, resources, CI workflow, icon, README, public keystore, and initial ZIP artifact generated. Patched AGP 9 built-in Kotlin migration by removing `org.jetbrains.kotlin.android` from app/root/version catalog, changed compile/target SDK to 36 for AGP 9.2 compatibility, enabled Compose build features, and moved Kotlin sources to `src/main/kotlin` convention.
+  - Now: Repackage corrected ZIP.
+  - Next: User replaces repository contents or pushes corrected ZIP contents to GitHub, and workflow builds signed release artifact.
 - Open questions (UNCONFIRMED if needed): None blocking.
-- Working set (files/ids/commands): `/mnt/data/Famy`, `/mnt/data/Famy.zip`, user brief from uploaded markdown file.
+- Working set (files/ids/commands): `/mnt/data/famy_fix/Famy`, `/mnt/data/Famy_fixed.zip`, user brief from uploaded markdown file, failing GitHub Actions log from user.

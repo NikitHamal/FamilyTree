@@ -18,7 +18,7 @@ Famy is a modern, offline-first family tree app for Android. It is built with Ko
 
 Open the project in Android Studio Panda 4 or newer and sync Gradle.
 
-Command line builds require Android SDK API 37 installed. The GitHub workflow installs/configures Gradle automatically.
+Command line builds require Android SDK API 36 installed. The GitHub workflow installs/configures Gradle automatically.
 
 ```bash
 gradle assembleRelease
