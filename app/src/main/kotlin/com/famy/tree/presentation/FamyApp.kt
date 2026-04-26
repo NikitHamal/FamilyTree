@@ -1,13 +1,15 @@
 package com.famy.tree.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Insights
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Timeline
@@ -23,6 +25,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -33,7 +36,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -56,6 +61,7 @@ import com.famy.tree.presentation.screens.SettingsScreen
 import com.famy.tree.presentation.screens.TimelineScreen
 import com.famy.tree.presentation.screens.TreeScreen
 import com.famy.tree.presentation.theme.FamyTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,6 +74,7 @@ fun FamyApp(viewModel: FamyViewModel) {
             }
             return@FamyTheme
         }
+
         val navController = rememberNavController()
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
@@ -75,9 +82,8 @@ fun FamyApp(viewModel: FamyViewModel) {
         val start = if (ui.familyState.settings.onboardingComplete) Routes.HOME else Routes.ONBOARDING
 
         LaunchedEffect(ui.message) {
-            val message = ui.message
-            if (message != null) {
-                snackbarHostState.showSnackbar(message)
+            ui.message?.let {
+                snackbarHostState.showSnackbar(it)
                 viewModel.clearMessage()
             }
         }
@@ -86,7 +92,7 @@ fun FamyApp(viewModel: FamyViewModel) {
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet {
-                    Text("Famy", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(24.dp))
+                    DrawerHeader(treeName = ui.familyState.tree.name, memberCount = ui.familyState.members.size)
                     DrawerItem("Relationships", Icons.Outlined.Link, Routes.RELATIONSHIPS, navController, drawerState, scope)
                     DrawerItem("Timeline", Icons.Outlined.Timeline, Routes.TIMELINE, navController, drawerState, scope)
                     DrawerItem("Insights", Icons.Outlined.Insights, Routes.INSIGHTS, navController, drawerState, scope)
@@ -116,11 +122,40 @@ fun FamyApp(viewModel: FamyViewModel) {
                 }
             ) { innerPadding ->
                 NavHost(navController = navController, startDestination = start, modifier = Modifier.padding(innerPadding)) {
-                    composable(Routes.ONBOARDING) { OnboardingScreen(onComplete = { viewModel.completeOnboarding(); navController.navigate(Routes.HOME) { popUpTo(Routes.ONBOARDING) { inclusive = true } } }) }
-                    composable(Routes.HOME) { HomeScreen(ui.familyState, onOpenDrawer = { scope.launch { drawerState.open() } }, onAddDemo = viewModel::addDemoTree, onAddMember = viewModel::saveMember, onOpenMember = { navController.navigate("${Routes.PROFILE}/$it") }, onOpenTree = { navController.navigate(Routes.TREE) }) }
-                    composable(Routes.TREE) { TreeScreen(ui.familyState, onOpenDrawer = { scope.launch { drawerState.open() } }, onMemberClick = { navController.navigate("${Routes.PROFILE}/$it") }) }
-                    composable(Routes.MEMBERS) { MembersScreen(ui.familyState, onAddMember = viewModel::saveMember, onOpenMember = { navController.navigate("${Routes.PROFILE}/$it") }) }
-                    composable(Routes.SEARCH) { SearchScreen(ui.familyState, onOpenMember = { navController.navigate("${Routes.PROFILE}/$it") }) }
+                    composable(Routes.ONBOARDING) {
+                        OnboardingScreen(
+                            onComplete = {
+                                viewModel.completeOnboarding()
+                                navController.navigate(Routes.HOME) {
+                                    popUpTo(Routes.ONBOARDING) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                    composable(Routes.HOME) {
+                        HomeScreen(
+                            state = ui.familyState,
+                            onOpenDrawer = { scope.launch { drawerState.open() } },
+                            onAddDemo = viewModel::addDemoTree,
+                            onAddMember = viewModel::saveMember,
+                            onOpenMember = { navController.navigate("${Routes.PROFILE}/$it") },
+                            onOpenTree = { navController.navigate(Routes.TREE) }
+                        )
+                    }
+                    composable(Routes.TREE) {
+                        TreeScreen(
+                            state = ui.familyState,
+                            onOpenDrawer = { scope.launch { drawerState.open() } },
+                            onMemberClick = { navController.navigate("${Routes.PROFILE}/$it") },
+                            onSetRootMember = viewModel::setRootMember
+                        )
+                    }
+                    composable(Routes.MEMBERS) {
+                        MembersScreen(ui.familyState, onAddMember = viewModel::saveMember, onOpenMember = { navController.navigate("${Routes.PROFILE}/$it") })
+                    }
+                    composable(Routes.SEARCH) {
+                        SearchScreen(ui.familyState, onOpenMember = { navController.navigate("${Routes.PROFILE}/$it") })
+                    }
                     composable("${Routes.PROFILE}/{memberId}", arguments = listOf(navArgument("memberId") { type = NavType.StringType })) { entry ->
                         MemberProfileScreen(
                             state = ui.familyState,
@@ -146,13 +181,29 @@ fun FamyApp(viewModel: FamyViewModel) {
 }
 
 @Composable
+private fun DrawerHeader(treeName: String, memberCount: Int) {
+    Surface(
+        modifier = Modifier.padding(16.dp),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text("Famy", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+            Text(treeName, style = MaterialTheme.typography.bodyLarge)
+            Text("$memberCount people in this archive", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
 private fun DrawerItem(
     label: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     route: String,
-    navController: androidx.navigation.NavHostController,
+    navController: NavHostController,
     drawerState: androidx.compose.material3.DrawerState,
-    scope: kotlinx.coroutines.CoroutineScope
+    scope: CoroutineScope
 ) {
     NavigationDrawerItem(
         label = { Text(label) },

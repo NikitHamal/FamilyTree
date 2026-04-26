@@ -1,23 +1,32 @@
-# Continuity Ledger
+Goal (incl. success criteria):
+- Rebuild Famy into a more premium, minimal, Notion-like Android app with substantially improved UI/UX, better tree visualization, stronger onboarding, and retained offline-first behavior.
+- Deliver a corrected project zip that builds and reflects the upgraded design language.
 
-- Goal (incl. success criteria): Build a complete Android project for Famy, package `com.famy.tree`, with Material 3 Jetpack Compose UI, offline local storage, optimized visual family tree, onboarding, crash/debug screen, app icon, public signing keystore, and GitHub Actions workflow that builds and uploads a signed release APK renamed with commit SHA.
-- Constraints/Assumptions:
-  - Android app is offline-first and stores data locally on-device.
-  - Use Kotlin, Jetpack Compose, Material 3, Material Icons.
-  - Use modern stable toolchain defaults: AGP 9.2.0, Gradle 9.4.1 in CI, AGP built-in Kotlin, Kotlin Compose plugin 2.3.20, Compose BOM 2026.04.01.
-  - Poppins font binaries are not bundled in the repository.
-  - Public release keystore is intentionally included as requested for open-source/personal workflow.
-  - This sandbox cannot run a full Android build because it lacks Android SDK/Gradle dependency setup, so final build verification is deferred to GitHub Actions/Android Studio.
-- Key decisions:
-  - Single Android module for easy GitHub import, with modular package structure inside `app/src/main/kotlin/com/famy/tree`.
-  - Local JSON file repository avoids database codegen, keeps builds fast, and remains easy to inspect/backup.
-  - Tree rendering uses Compose Canvas with transform gestures, viewport culling, compact node drawing, and multiple layouts.
-  - Crash catcher stores raw stack trace and launches a minimal copy/restart screen.
-  - CI uses current GitHub action major versions and installs Gradle through `gradle/actions/setup-gradle@v6` for reliability.
-- State:
-  - Done: Project files, Kotlin source, resources, CI workflow, icon, README, public keystore, and initial ZIP artifact generated. Patched AGP 9 built-in Kotlin migration by removing `org.jetbrains.kotlin.android` from app/root/version catalog, changed compile/target SDK to 36 for AGP 9.2 compatibility, enabled Compose build features, and moved Kotlin sources to `src/main/kotlin` convention.
-  - Now: Repackage corrected ZIP.
-  - Next: User replaces repository contents or pushes corrected ZIP contents to GitHub, and workflow builds signed release artifact.
-- Open questions (UNCONFIRMED if needed): None blocking.
-- Working set (files/ids/commands): `/mnt/data/famy_fix/Famy`, `/mnt/data/Famy_fixed.zip`, user brief from uploaded markdown file, failing GitHub Actions log from user.
-- 2026-04-26 fix pass 2: compile log showed both app/src/main/java and app/src/main/kotlin being compiled, causing widespread redeclarations. Canonical source set is now src/main/kotlin only; workflow removes stale src/main/java before build; app build.gradle restricts main source dirs to src/main/kotlin. Also added missing dp import in FamyApp and removed SelectionContainer wrapper from crash report screen.
+Constraints/Assumptions:
+- Kotlin + Jetpack Compose + Material 3.
+- Offline-first local storage only.
+- Must remain buildable on GitHub Actions with existing signing workflow.
+- No TODOs or placeholder architecture; keep files modular.
+- User wants references used as inspiration, not exact copies.
+
+Key decisions:
+- Keep single-module app for deliverability, but improve design system and screen composition.
+- Introduce a premium dark theme with Notion-like spacing, elevated cards, cleaner typography, and less clutter.
+- Improve tree experience with better node cards, branch tinting, legend, layout switcher, and smoother gestures.
+- Improve home/dashboard and member profile flows first because these most affect perceived quality.
+
+State:
+- Done: Extracted prior Famy_fixed_v2 project. Reviewed current failure history and new UX feedback.
+- Now: Refactoring UI/design system and selected screens for higher quality experience.
+- Next: Package upgraded zip and provide handoff notes.
+
+Open questions (UNCONFIRMED if needed):
+- UNCONFIRMED: Full live compile cannot be run in sandbox due lack of Android SDK/network; validate structure and package carefully.
+
+Working set (files/ids/commands):
+- Workspace: /mnt/data/famy_work/project/Famy
+- References: /mnt/data/ghostwriter_images/context/*.png
+
+- Done: Applied upgraded theme, redesigned app shell/drawer, rebuilt onboarding, home, members, search, member profile, and tree experience.
+- Constraint note: attempted Gradle assemble, but wrapper download failed because network access to services.gradle.org is blocked in this sandbox.
+- Next: user can build locally or in CI using the included project zip.

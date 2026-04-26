@@ -43,6 +43,7 @@ class FamyViewModel(application: Application) : AndroidViewModel(application) {
     fun setDateFormat(format: String) = mutate { it.copy(settings = it.settings.copy(dateFormat = format)) }
 
     fun addDemoTree() = replace(SampleData.demo().copy(settings = _state.value.familyState.settings.copy(onboardingComplete = true)))
+    fun setRootMember(memberId: String?) = mutate { it.copy(tree = it.tree.copy(rootMemberId = memberId, updatedAt = System.currentTimeMillis())) }
     fun clearAll() = viewModelScope.launch { _state.value = FamyUiState(familyState = repository.clear()) }
 
     fun saveMember(member: FamilyMember) = mutate { state ->
